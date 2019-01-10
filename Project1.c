@@ -1,6 +1,6 @@
 /*
  * In this project, you will implement an application to read words from a text file.  
- * The filename will be supplied onthe command line.  
+ * The filename will be supplied on the command line.  
  * Your program should display the total number of words in the file.
 */
 
