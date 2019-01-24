@@ -11,7 +11,6 @@
 #include <string.h>
 
 #include "set.h"
-int hasElement(SET *sp, char *elt);
 
 struct set {
     int count; //Number of elements
@@ -19,7 +18,10 @@ struct set {
     char **data;
 };
 
-//Return a pointer to a new set with a maximum capacity ofmaxElts
+/**
+ * Return a pointer to a new set with a maximum capacity ofmaxElts
+ * Big O: O(1)
+ * */
 SET *createSet(int maxElts)
 {
     SET *sp;
@@ -32,7 +34,23 @@ SET *createSet(int maxElts)
     return sp;
 };
 
-//Deallocate memory associated with the set pointed to by sp
+int search(SET *sp, char *elt){
+    int i;
+    assert(sp != NULL);
+    for (i = 0; i < sp->count; i++)
+	{
+		if (strcmp(sp->data[i], elt) == 0) 
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/**
+ * Deallocate memory associated with the set pointed to by sp
+ * Big O: O(n)
+ * */
 void destroySet(SET *sp)
 {
     int i;
@@ -43,48 +61,65 @@ void destroySet(SET *sp)
     free(sp); //Frees pointer to element
 };
 
-//Return the number of elements in the set pointed to by sp
+/**
+ * Return the number of elements in the set pointed to by sp
+ * Big O: O(1);
+ * */
 int numElements(SET *sp)
 {
-    assert(sp != NULL);
 	return(sp->count);
 }
 
-//Add elt to the set pointed to by sp
+/**
+ * Add elt to the set pointed to by sp
+ * Big O: O(1)
+ * */
 void addElement(SET *sp, char *elt)
 {
     if(sp->count == sp->length)
         return;
-    sp->data[sp->count] = strdup(elt);
-    (sp->count)++;
+    if (findElement(sp, elt) == NULL)
+    {
+        sp->data[sp->count] = strdup(elt);
+        (sp->count)++;
+    }
 }
 
-//Remove elt from the set pointed to by sp
+/**
+ * Remove elt from the set pointed to by sp
+ * Big O: O(1)
+ * */
 void removeElement(SET *sp, char *elt)
 {
-    char *temp = findElement(sp, elt);
-	assert(sp != NULL);
-	assert(elt != NULL);
-    if (temp != NULL)//If element is found
+    int i, index;
+    assert(sp != NULL);
+    index = search(sp, elt);
+    if (index != -1)//If element is found
 	{ 
-		free(temp); //Free element
+	    free(sp->data[index]); //Free element
+        for(i = index; i < (sp->count-1); i++) //Shifts the array
+            sp->data[i] = sp->data[i+1];
 		(sp->count)--; //Corrects set count
 	}
     return;
 }
 
-//If elt is present in the set pointed to by sp then return the matching element, otherwise return NULL
+/**
+ * If elt is present in the set pointed to by sp then return the matching element, otherwise return NULL
+ * Big O: O(n)
+ * */
 char *findElement(SET *sp, char *elt)
 {
-    int i;
-	assert(sp != NULL);
-    int temp = hasElement(sp, elt);
-	if (temp != -1)
-		return(sp->data[temp]); //Return element
+    int index = search(sp, elt);
+	if (index != -1) 
+		return(sp->data[index]);
     return NULL;
 }
 
-//Allocate and return an array of elements in the set pointed to by sp
+/**
+ * Allocate and return an array of elements in the set pointed to by sp
+ * Big O: O(1)
+ * */
 char **getElements(SET *sp)
 {
     int i;
@@ -93,16 +128,4 @@ char **getElements(SET *sp)
     ap = malloc(sizeof (sp));
     ap = sp->data;
     return ap;
-}
-
-//Returns true if set has the element, else false
-int hasElement(SET *sp, char *elt)
-{
-    int i, found = -1;
-	for (i = 0; i < sp->count; i++)
-	{
-		if (strcmp(sp->data[i], elt) == 0) 
-			found = i;
-    }
-	return found;
 }

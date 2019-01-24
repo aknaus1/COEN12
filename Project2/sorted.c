@@ -11,7 +11,6 @@
 #include <string.h>
 
 #include "set.h"
-int hasElement(SET *sp, char *elt);
 
 struct set {
     int count; //Number of elements
@@ -31,6 +30,26 @@ SET *createSet(int maxElts)
     assert(sp->data != NULL);
     return sp;
 };
+
+int search(SET *sp, char *elt, bool *found)
+{
+    int low = 0, mid, high = (sp->count-1);
+    *found = false;
+    while(low<=high)
+    {
+        mid = (low+high)/2;
+        if(strcmp(sp->data[mid], elt) == 0)
+        {
+            *found = true;
+            return mid;
+        }
+        else if(strcmp(sp->data[mid], elt) > 0)
+            high = (mid-1);
+        else
+            low = (mid+1);
+    }
+    return low;
+}
 
 //Deallocate memory associated with the set pointed to by sp
 void destroySet(SET *sp)
@@ -53,39 +72,30 @@ int numElements(SET *sp)
 //Add elt to the set pointed to by sp
 void addElement(SET *sp, char *elt)
 {
-    int i, low = 0, mid, high = (sp->count-1);
+    int i, index;
+    bool found;
     assert(sp != NULL);
-    while(low<=high)
-    {
-        mid = (low+high)/2;
-        if(strcmp(sp->data[mid], elt) == 0)
-            return sp->data[mid];
-        else if(strcmp(sp->data[mid], elt) > 0)
-            high = (mid-1);
-        else
-            low = (mid+1);
-    }
-    for(i = (sp->count); i > mid; i--)
+    index = search(sp, elt, &found);
+    if(found == true)
+        return;
+    for(i = (sp->count); i > index; i--)
         sp->data[i] = sp->data[i-1];
-    sp->data[mid] = strdup(elt);
+    sp->data[index] = strdup(elt);
     (sp->count)++;
 }
 
 //Remove elt from the set pointed to by sp
 void removeElement(SET *sp, char *elt)
 {
-    int i;
+    int i, index;
+    bool found;
 	assert(sp != NULL);
-    char *temp = findElement(sp, elt);
-    if(temp == NULL)
+    if (sp->count == 0)
         return;
-    free(temp); //Free element
-    if (sp->count == 1)//If it is the only element
-	{ 
-		(sp->count)--; //Corrects set count
+    index = search(sp, elt, &found);
+    if(found == false)
         return;
-	}
-    int index = hasElement(sp, elt);
+    free(sp->data[index]); //Free element
     for(i = index; i < sp->count-1; i++)
         sp->data[i] = sp->data[i+1];
     (sp->count)--;
@@ -95,18 +105,13 @@ void removeElement(SET *sp, char *elt)
 //If elt is present in the set pointed to by sp then return the matching element, otherwise return NULL
 char *findElement(SET *sp, char *elt)
 {
-    int low = 0, mid, high = (sp->count-1);
+    if(sp->count == 0)
+        return NULL;
 	assert(sp != NULL);
-    while(low<=high)
-    {
-        mid = (low+high)/2;
-        if(strcmp(sp->data[mid], elt) == 0)
-            return sp->data[mid];
-        else if(strcmp(sp->data[mid], elt) > 0)
-            high = (mid-1);
-        else
-            low = (mid+1);
-    }
+    bool found;
+    int index = search(sp, elt, &found);
+    if(found == true)
+        return sp->data[index];
     return NULL;
 }
 
