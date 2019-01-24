@@ -53,34 +53,60 @@ int numElements(SET *sp)
 //Add elt to the set pointed to by sp
 void addElement(SET *sp, char *elt)
 {
-    if(sp->count == sp->length)
-        return;
-    sp->data[sp->count] = strdup(elt);
+    int i, low = 0, mid, high = (sp->count-1);
+    assert(sp != NULL);
+    while(low<=high)
+    {
+        mid = (low+high)/2;
+        if(strcmp(sp->data[mid], elt) == 0)
+            return sp->data[mid];
+        else if(strcmp(sp->data[mid], elt) > 0)
+            high = (mid-1);
+        else
+            low = (mid+1);
+    }
+    for(i = (sp->count); i > mid; i--)
+        sp->data[i] = sp->data[i-1];
+    sp->data[mid] = strdup(elt);
     (sp->count)++;
 }
 
 //Remove elt from the set pointed to by sp
 void removeElement(SET *sp, char *elt)
 {
-    char *temp = findElement(sp, elt);
+    int i;
 	assert(sp != NULL);
-	assert(elt != NULL);
-    if (temp != NULL)//If element is found
+    char *temp = findElement(sp, elt);
+    if(temp == NULL)
+        return;
+    free(temp); //Free element
+    if (sp->count == 1)//If it is the only element
 	{ 
-		free(temp); //Free element
 		(sp->count)--; //Corrects set count
+        return;
 	}
+    int index = hasElement(sp, elt);
+    for(i = index; i < sp->count-1; i++)
+        sp->data[i] = sp->data[i+1];
+    (sp->count)--;
     return;
 }
 
 //If elt is present in the set pointed to by sp then return the matching element, otherwise return NULL
 char *findElement(SET *sp, char *elt)
 {
-    int i;
+    int low = 0, mid, high = (sp->count-1);
 	assert(sp != NULL);
-    int temp = hasElement(sp, elt);
-	if (temp != -1)
-		return(sp->data[temp]); //Return element
+    while(low<=high)
+    {
+        mid = (low+high)/2;
+        if(strcmp(sp->data[mid], elt) == 0)
+            return sp->data[mid];
+        else if(strcmp(sp->data[mid], elt) > 0)
+            high = (mid-1);
+        else
+            low = (mid+1);
+    }
     return NULL;
 }
 
@@ -93,16 +119,4 @@ char **getElements(SET *sp)
     ap = malloc(sizeof (sp));
     ap = sp->data;
     return ap;
-}
-
-//Returns true if set has the element, else false
-int hasElement(SET *sp, char *elt)
-{
-    int i, found = -1;
-	for (i = 0; i < sp->count; i++)
-	{
-		if (strcmp(sp->data[i], elt) == 0) 
-			found = i;
-    }
-	return found;
 }
