@@ -1,0 +1,66 @@
+File: Bible
+    Unique Unsorted "real" Times:
+        Trial 1: 2.941s
+        Trial 2: 2.897s
+        Trial 3: 2.961s
+        Avg: 2.933
+    Unique Sorted "real" Times:
+        Trial 1: 0.329s
+        Trial 2: 0.328s
+        Trial 3: 0.331s
+        Avg: 0.329s
+    Parity Unsorted "real" Times:
+        Trial 1: 31.375s
+        Trial 2: 30.133s
+        Trial 3: 32.167
+        Avg: 31.225
+    Parity Sorted "real" Times:
+        Trial 1: 3.592s
+        Trial 2: 3.609s
+        Trial 3: 3.576s
+        Avg: 3.592
+
+
+File: Macbeth
+    Unique Unsorted "real" Times:
+        Trial 1: 0.076s
+        Trial 2: 0.073s
+        Trial 3: 0.071s
+        Avg: 0.073s
+    Unique Sorted "real" Times:
+        Trial 1: 0.024s
+        Trial 2: 0.025s
+        Trial 3: 0.020s
+        Avg: 0.023s
+    Parity Unsorted "real" Times:
+        Trial 1: 0.250s
+        Trial 2: 0.307s
+        Trial 3: 0.246s
+        Avg: 0.268s
+    Parity Sorted "real" Times:
+        Trial 1: 0.055s
+        Trial 2: 0.054s
+        Trial 3: 0.057s
+        Avg: 0.055s
+
+File: GreenEggsAndHam
+    Unique Unsorted "real" Times:
+        Trial 1: 0.010s
+        Trial 2: 0.008s
+        Trial 3: 0.007s
+        Avg: 0.0083s
+    Unique Sorted "real" Times:
+        Trial 1: 0.007s
+        Trial 2: 0.007s
+        Trial 3: 0.008s
+        Avg: 0.0073s
+    Parity Unsorted "real" Times:
+        Trial 1: 0.007s
+        Trial 2: 0.007s
+        Trial 3: 0.007s
+        Avg: 0.007s
+    Parity Sorted "real" Times:
+        Trial 1: 0.009s
+        Trial 2: 0.008s
+        Trial 3: 0.008s
+        Avg: 0.008s
