@@ -122,10 +122,9 @@ char *findElement(SET *sp, char *elt)
  * */
 char **getElements(SET *sp)
 {
-    int i;
-    char set[sp->count];
-    char **ap;
-    ap = malloc(sizeof (sp));
-    ap = sp->data;
-    return ap;
+    char**elts;
+	assert(sp != NULL);
+	elts = malloc(sizeof(char *) * sp->count);
+	assert(elts != NULL);
+	return memcpy(elts, sp->data, sizeof(char *) * sp->count);
 }

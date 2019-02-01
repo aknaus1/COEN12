@@ -21,6 +21,7 @@ struct set {
 //Return a pointer to a new set with a maximum capacity ofmaxElts
 SET *createSet(int maxElts)
 {
+    int i;
     SET *sp;
     sp = malloc(sizeof (SET));
     assert(sp != NULL);
@@ -118,10 +119,9 @@ char *findElement(SET *sp, char *elt)
 //Allocate and return an array of elements in the set pointed to by sp
 char **getElements(SET *sp)
 {
-    int i;
-    char set[sp->count];
-    char **ap;
-    ap = malloc(sizeof (sp));
-    ap = sp->data;
-    return ap;
+    char**elts;
+	assert(sp != NULL);
+	elts = malloc(sizeof(char *) * sp->count);
+	assert(elts != NULL);
+	return memcpy(elts, sp->data, sizeof(char *) * sp->count);
 }
