@@ -26,6 +26,7 @@ struct set
 
 /**
  * Return a pointer to a new set with a maximum capacity of maxElts
+ * O(n)
  * */
 SET*createSet(int maxElts)
 {
@@ -44,6 +45,10 @@ SET*createSet(int maxElts)
     return sp;
 }
 
+/**
+ * Hash Function
+ * O(n)
+ * */
 unsigned strhash(char*s) 
 {
 	unsigned hash = 0;
@@ -54,6 +59,7 @@ unsigned strhash(char*s)
 
 /**
  * Find index of element in set sp
+ * O(n)
  * */
 int search(SET*sp, char*elt, bool*found)
 {
@@ -91,6 +97,7 @@ int search(SET*sp, char*elt, bool*found)
 
 /**
  * Deallocate memory associated with the set pointed to by sp
+ * O(n)
  * */
 void destroySet(SET*sp)
 {
@@ -108,6 +115,7 @@ void destroySet(SET*sp)
 
 /**
  * Return the number of elements in the set pointed to by sp
+ * O(1)
  * */
 int numElements(SET*sp)
 {
@@ -117,6 +125,7 @@ int numElements(SET*sp)
 
 /**
  * Add elt to the set pointed to by sp
+ * O(n)
  * */
 void addElement(SET*sp, char*elt)
 {
@@ -133,6 +142,7 @@ void addElement(SET*sp, char*elt)
 
 /**
  * remove elt from the set pointed to by sp
+ * O(n)
  * */
 void removeElement(SET*sp, char*elt)
 {
@@ -150,6 +160,7 @@ void removeElement(SET*sp, char*elt)
 /**
  * If elt is present in the set pointed to by sp then return the matching element, 
  * otherwise return NULL
+ * O(n)
  * */
 char *findElement(SET*sp, char*elt)
 {
@@ -163,6 +174,7 @@ char *findElement(SET*sp, char*elt)
 
 /**
  * Allocate and return an array of elements in the set pointed to by sp
+ * O(n)
  * */
 char **getElements(SET*sp)
 {
