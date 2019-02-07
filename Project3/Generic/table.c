@@ -20,71 +20,62 @@ struct set
 {
 	int count;
 	int length;
-	char **data;
+	void **data;
 	char *flags; //array of flags to track status of a location
+    int (*compare)();
+    unsigned (*hash)();
 };
 
 /**
  * Return a pointer to a new set with a maximum capacity of maxElts
  * */
-SET*createSet(int maxElts)
+SET*createSet(int maxElts, int (*compare)(), unsigned (*hash)())
 {
     int i;
     SET *sp;
-    sp = malloc(sizeof (SET));
+    sp = malloc(sizeof(SET));
     assert(sp != NULL);
     sp->count = 0;
     sp->length = maxElts;
-    sp->data = malloc(sizeof (char *) *maxElts);
+    sp->data = malloc(sizeof(void*)*maxElts);
     assert(sp->data != NULL);
-    sp->flags = malloc(sizeof(char)*maxElts);
-	assert(sp->flags != NULL);
+    sp->flags = malloc(sizeof(void)*maxElts);
 	for(i = 0;i < maxElts;i++)
 		sp->flags[i] = EMPTY;
+    sp->compare=compare;
+    sp->hash=hash;
     return sp;
-}
-
-unsigned strhash(char*s) 
-{
-	unsigned hash = 0;
-	while (*s != '\0')
-		hash = 31*hash +*s ++;
-	return hash;
 }
 
 /**
  * Find index of element in set sp
  * */
-int search(SET*sp, char*elt, bool*found)
+int search(SET*sp, void*elt, bool*found)
 {
-	int i, lastIndex, flag = 0, first;
-	assert(sp != NULL);
-	assert(elt != NULL);
-	unsigned index = (strhash(elt) % sp->length);
-	for(i = 0;i < sp->length; i++)
+	int i, index, count = 0, first;
+	assert(sp != NULL && elt != NULL);
+	index = sp->hash(elt)%sp->length;
+	for(i = 0;i < sp->length;i++)
 	{
-		if(sp->flags[index]==FILLED && strcmp(sp->data[index],elt) == 0)
+		if(sp->flags[index]==FILLED && ((*sp->compare)(sp->data[index], elt)) == 0)
 		{
 			*found = true;
 			return index;
 		}
+        else if(sp->flags[index]==DELETED && count == 0)
+		{
+			first = index;
+			count++;
+		}
 		else if(sp->flags[index]==EMPTY)
 		{
 			*found = false;
-			if(flag==1)
+			if(count==1)
 				return first;
 			return index;
 		}
-		else if(sp->flags[index]==DELETED)
-		{
-			if(flag==0)
-			{
-				first = index;
-				flag++;
-			}
-		}
-		index++;
-		index = index%sp->length;
+        index++;
+        index = index%sp->length;
 	}
 	return -1;
 }
@@ -94,14 +85,9 @@ int search(SET*sp, char*elt, bool*found)
  * */
 void destroySet(SET*sp)
 {
-    int i;
-	assert(sp != NULL);
-	for(i = 0;i < sp->length;i++)
-	{
-		if(sp->flags[i] == FILLED)
-			free(sp->data[i]);
-	}
+    assert(sp != NULL);
 	free(sp->data);
+    free(sp->flags);
 	free(sp);
 	return;
 }
@@ -118,14 +104,15 @@ int numElements(SET*sp)
 /**
  * Add elt to the set pointed to by sp
  * */
-void addElement(SET*sp, char*elt)
+void addElement(SET*sp, void*elt)
 {
-	assert(sp != NULL);
+	assert(sp != NULL && elt != NULL);
 	bool found;
 	int index = search(sp, elt, &found);
 	if(found == true)
 		return;
-	sp->data[index] = strdup(elt);
+	sp->data[index] = elt;
+    assert(sp->data != NULL);
 	sp->flags[index] = FILLED;
 	sp->count++;
 	return;
@@ -134,15 +121,14 @@ void addElement(SET*sp, char*elt)
 /**
  * remove elt from the set pointed to by sp
  * */
-void removeElement(SET*sp, char*elt)
+void removeElement(SET*sp, void*elt)
 {
-	assert(sp != NULL);
+	assert(sp != NULL && elt != NULL);
 	bool found;
 	int index = search(sp, elt, &found);
 	if(found == false)
 		return;
 	sp->flags[index] = DELETED;
-	free(sp->data[index]);
 	sp->count--;
 	return;
 }
@@ -151,9 +137,9 @@ void removeElement(SET*sp, char*elt)
  * If elt is present in the set pointed to by sp then return the matching element, 
  * otherwise return NULL
  * */
-char *findElement(SET*sp, char*elt)
+void *findElement(SET*sp, void*elt)
 {
-	assert(sp != NULL);
+	assert(sp != NULL && elt != NULL);
 	bool found;
 	int index = search(sp, elt, &found);
 	if(found == false)
@@ -164,11 +150,19 @@ char *findElement(SET*sp, char*elt)
 /**
  * Allocate and return an array of elements in the set pointed to by sp
  * */
-char **getElements(SET*sp)
+void *getElements(SET*sp)
 {
-	char**elts;
+    int i, counter = 0;
+    void **p;
 	assert(sp != NULL);
-	elts = malloc(sizeof(char *) * sp->count);
-	assert(elts != NULL);
-	return memcpy(elts, sp->data, sizeof(char *) * sp->count);
+    p=malloc(sizeof(void*)*sp->count);
+    for(i = 0;i < sp->length;i++)
+    {
+        if(sp->flags[i]==FILLED)
+        {
+            p[counter] = sp->data[i];
+            counter++;
+        }
+    }
+	return p;
 }
