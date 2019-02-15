@@ -25,15 +25,16 @@ struct list
 
 /**
  * return a pointer to a new list using compare as its comparison function, which may be NULL
+ * O(1)
  * */
 LIST *createList(int (*compare)())
 {
     LIST *lp;
-    lp = malloc(sizeof(struct list));
+    lp = malloc(sizeof(LIST));
     assert(lp != NULL);
     lp->count = 0;
     lp->compare = compare;
-    lp->head = malloc(sizeof(struct node));
+    lp->head = malloc(sizeof(NODE));
     assert(lp->head != NULL);
     lp->head->next = lp->head;
     lp->head->prev = lp->head;
@@ -42,6 +43,7 @@ LIST *createList(int (*compare)())
 
 /**
  * deallocate memory associated with the list pointed to by lp
+ * O(n)
  * */
 void destroyList(LIST *lp)
 {
@@ -56,10 +58,12 @@ void destroyList(LIST *lp)
     }
     free(pDel);
     free(lp);
+    return;
 }
 
 /**
  * return the number of items in the list pointed to by lp
+ * O(1)
  * */
 int numItems(LIST *lp)
 {
@@ -69,6 +73,7 @@ int numItems(LIST *lp)
 
 /**
  * add item as the first item in the list pointed to by lp
+ * O(1)
  * */
 void addFirst(LIST *lp, void *item)
 {
@@ -79,31 +84,37 @@ void addFirst(LIST *lp, void *item)
     lp->head->next = p;
     p->prev = lp->head;
     lp->count++;
+    return;
 }
 
 /**
  * add item as the last item in the list pointed to by lp
+ * O(1)
  * */
 void addLast(LIST *lp, void *item)
 {
     assert(lp != NULL && item != NULL);
-    NODE *p = malloc(sizeof(NODE));;
+    NODE *p = malloc(sizeof(NODE));
+    p->data = item;
     p->prev = lp->head->prev;
-    lp->head->prev->next = p;
     p->next = lp->head;
+    lp->head->prev->next = p;
     lp->head->prev = p;
     lp->count++;
+    return;
 }
 
 /**
  * remove and return the first item in the list pointed to by lp;
  * the list must not be empty
+ * O(1)
  * */
 void *removeFirst(LIST *lp)
 {
     assert(lp->count > 0);
     void *tempData;
-    NODE *temp = lp->head->next;
+    NODE *temp = malloc(sizeof(NODE));
+    temp = lp->head->next;
     lp->head->next = temp->next;
     temp->next->prev = lp->head;
     lp->count--;
@@ -115,12 +126,14 @@ void *removeFirst(LIST *lp)
 /**
  * remove and return the last item in the list pointed to by lp;
  * the list must not be empty
+ * O(1)
  * */
 void *removeLast(LIST *lp)
 {
     assert(lp->count > 0);
     void *tempData;
-    NODE *temp = lp->head->prev;
+    NODE *temp = malloc(sizeof(NODE));
+    temp = lp->head->prev;
     temp->prev->next = lp->head;
     lp->head->prev = temp->prev;
     lp->count--;
@@ -132,35 +145,39 @@ void *removeLast(LIST *lp)
 /**
  * return, but do not remove, the first item in the list pointed to by lp;
  * the list must not be empty
+ * O(1)
  * */
 void *getFirst(LIST *lp)
 {
     assert(lp->count > 0);
-    return lp->head->next->data;
+    return (lp->head->next->data);
 }
 
 /**
  * return, but do not remove, the last item in the list pointed to by lp;
  * the list must not be empty
+ * O(1)
  * */
 void *getLast(LIST *lp)
 {
     assert(lp->count > 0);
-    return lp->head->prev->data;
+    return (lp->head->prev->data);
 }
 
 /**
  * if item is present in the list pointed to by lp then remove it;
  * the comparison function must not be NULL
+ * O(n)
  * */
 void removeItem(LIST *lp, void *item)
 {
     assert(lp->compare != NULL && lp->count > 0 && item != NULL);
     int i;
-    NODE *p = lp->head->next;
+    NODE *p = malloc(sizeof(NODE));
+    p = lp->head->next;
     for(i=0; i < lp->count; i++)
     {
-        if(lp->compare(p->data,item) == 0)
+        if(((lp->compare)(p->data , item)) == 0)
         {
             p->prev->next = p->next;
             p->next->prev = p->prev;
@@ -169,9 +186,7 @@ void removeItem(LIST *lp, void *item)
             return;
         }
         else
-        {
             p = p->next;
-        }
     }
     return;
 }
@@ -179,28 +194,28 @@ void removeItem(LIST *lp, void *item)
 /**
  * if item is present in the list pointed to by lp then return the matching item,
  * otherwise return NULL; the comparison function must not be NULL
+ * O(n)
  * */
 void *findItem(LIST *lp, void *item)
 {
+    //printf("Start Find Item\n");
     assert(lp->compare != NULL && lp->count > 0 && item != NULL);
     int i;
-    NODE *p = lp->head->next;
+    NODE *p = malloc(sizeof(NODE));
+    p = lp->head->next;
     for(i=0; i < lp->count; i++)
     {
-        if(lp->compare(p->data,item) == 0)
-        {
+        if(((lp->compare)(p->data,item)) == 0)
             return p->data;
-        }
         else
-        {
             p = p->next;
-        }
     }
     return NULL;
 }
 
 /**
  * allocate and return an array of items in the list pointed to by lp
+ * O(n)
  * */
 void *getItems(LIST *lp)
 {
