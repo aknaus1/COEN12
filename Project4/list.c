@@ -6,22 +6,19 @@
 
 #include "list.h"
 
-typedef struct node NODE;
-typedef struct list LIST;
-
-struct node
+typedef struct node
 {
     void *data;
-    NODE *next;
-    NODE *prev;
-};
+    struct node *next;
+    struct node *prev;
+}NODE;
 
-struct list
+typedef struct list
 {
     int count;
     NODE *head;
     int (*compare)(); 
-};
+}LIST;
 
 /**
  * return a pointer to a new list using compare as its comparison function, which may be NULL
@@ -81,8 +78,9 @@ void addFirst(LIST *lp, void *item)
     NODE *p = malloc(sizeof(NODE));;
     p->data = item;
     p->next = lp->head->next;
-    lp->head->next = p;
     p->prev = lp->head;
+    lp->head->next = p;
+    p->next->prev = p;
     lp->count++;
     return;
 }
@@ -171,7 +169,7 @@ void *getLast(LIST *lp)
  * */
 void removeItem(LIST *lp, void *item)
 {
-    assert(lp->compare != NULL && lp->count > 0 && item != NULL);
+    assert(lp != NULL && lp->compare != NULL);
     int i;
     NODE *p = malloc(sizeof(NODE));
     p = lp->head->next;
@@ -198,9 +196,8 @@ void removeItem(LIST *lp, void *item)
  * */
 void *findItem(LIST *lp, void *item)
 {
-    //printf("Start Find Item\n");
-    assert(lp->compare != NULL && lp->count > 0 && item != NULL);
     int i;
+    assert(lp != NULL && lp->compare != NULL);
     NODE *p = malloc(sizeof(NODE));
     p = lp->head->next;
     for(i=0; i < lp->count; i++)
