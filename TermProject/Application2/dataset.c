@@ -1,4 +1,12 @@
-/**
+/*
+ * File: dataset.c
+ *
+ * COEN 12 Term Project, Application 2
+ * 
+ * Author: Andrew Knaus
+ * School: Santa Clara University
+ * Date Published: 3/15/2019
+ * 
  * Application 2
  * Description: Assume  that  the  college  takes  very  few  transfer  students
  *      and  has  most  of  its  students  stay  for  at  least  one  year
@@ -7,7 +15,7 @@
  *      Specifically,  all  of  the  searches are  based  on  student  IDs.
  *      The  major  interfaces  provided by your code should include createDataSet,
  *      destroyDataSet, searchID, insertion, deletion.  
- * */
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,11 +36,11 @@ typedef struct set
 }SET;
 
 /*
- * Function: createDataSet
+ * Function: createDataSet()
  * 
  * Complexity: O(n)
  * 
- * Description: Return pointer to new set with maximum capacity of maxStudents
+ * Description: Return pointer to new set SP with maximum capacity of maxStudents
  * 
  */
 SET *createDataSet(int maxStudents)
@@ -52,7 +60,7 @@ SET *createDataSet(int maxStudents)
 }
 
 /*
- * Function: destroyDataSet
+ * Function: destroyDataSet()
  * 
  * Complexity: O(1)
  * 
@@ -68,7 +76,7 @@ void destroyDataSet(SET *sp)
 }
 
 /*
- * Function: searchID
+ * Function: searchID()
  * 
  * Complexity: O(1)
  * 
@@ -85,11 +93,11 @@ void searchID(SET *sp, int studentID)
 }
 
 /*
- * Function: insertion
+ * Function: insertion()
  * 
  * Complexity: O(1)
  * 
- * Description:
+ * Description: Insert new node with age: age and ID: studentID to set pointed to by SP
  * 
  */
 void insertion(SET *sp, int studentID, int age)
@@ -107,9 +115,11 @@ void insertion(SET *sp, int studentID, int age)
 }
 
 /*
- * Function: deletion
+ * Function: deletion()
  * 
  * Complexity: O(1)
+ * 
+ * Description: Remove student with ID: studentID from set pointed to by SP
  * 
  */
 void deletion(SET *sp, int studentID)
