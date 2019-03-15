@@ -1,14 +1,12 @@
 /**
- * Application 1
+ * Application 2
  * Description: Assume  that  the  college  takes  very  few  transfer  students
- *   and  has  most  of  its  students  stay  for  at  least  one  year.
- *   (Hints: no  frequent  insertion  and  deletion  operations).
- *   And  the  maximum  student  number  is  given.
- *   But  it  does  require  a  lot  of  search  operations  based  on  student  ages.
- *   Please  note  that  your  search  functions  may  return multiple records when only a student age is given.
- *   In addition, the college often requires calculating the largest age gap among its students.
- *   The major interfaces provided by your code should include createDataSet,
- *   destroyDataSet, searchAge, insertion, deletion, maxAgeGap.  
+ *      and  has  most  of  its  students  stay  for  at  least  one  year
+ *      (Hints: no  frequent  insertion  and  deletion  operations).
+ *      And  the  maximum  student  number  is  given.  But  it  does  require  a  lot  of  search  operations.
+ *      Specifically,  all  of  the  searches are  based  on  student  IDs.
+ *      The  major  interfaces  provided by your code should include createDataSet,
+ *      destroyDataSet, searchID, insertion, deletion.  
  * */
 
 #include <stdio.h>
@@ -17,48 +15,112 @@
 #include <stdbool.h>
 #include <string.h>
 
-typedef struct node
+#define EMPTY 0
+#define FILLED 1
+#define DELETED 2
+
+typedef struct set
 {
-    int age;
-    int studentID;
     int count;
     int length;
-    
-}STUDENT;
+    int *age;
+    char *flag;
+}SET;
 
-createDataSet(int maxStudents)
+/*
+ * Function: createDataSet
+ * 
+ * Complexity: O(n)
+ * 
+ * Description: Return pointer to new set with maximum capacity of maxStudents
+ * 
+ */
+SET *createDataSet(int maxStudents)
 {
-
+    SET *sp = malloc(sizeof(SET));
+    assert(sp != NULL);
+    sp->age = malloc(sizeof(int)*maxStudents);
+    assert(sp->age != NULL);
+    sp->flag = malloc(sizeof(char)*maxStudents);
+    assert(sp->flag != NULL);
+    sp->count = 0;
+    sp->length = maxStudents;
+    int i;
+    for(i = 0; i < maxStudents; i++)
+		sp->flag[i] = EMPTY;
+    return sp;
 }
 
-destroyDataSet()
+/*
+ * Function: destroyDataSet
+ * 
+ * Complexity: O(1)
+ * 
+ * Description: Deallocate memory associated with the set pointed to by SP.
+ * 
+ */
+void destroyDataSet(SET *sp)
 {
-
+    assert(sp != NULL);
+    free(sp->age);
+    free(sp->flag);
+    free(sp);
 }
 
-searchAge(int studentID, int age)
+/*
+ * Function: searchID
+ * 
+ * Complexity: O(1)
+ * 
+ * Description: Check if student with id: studentID is in the set pointed to by SP.
+ * 
+ */
+void searchID(SET *sp, int studentID)
 {
-    printf("Searching for student: %d, with age: %d.\n", studentID, age);
-
-    printf("Student has been found.\n");
+    printf("Searching for student: %d\n", studentID);
+    if(sp->flag[studentID] == FILLED)
+        printf("Student: %d has been found.\n", studentID);
+    else
+        printf("Student: %d has not been found.\n", studentID);
 }
 
-insertion(int studentID, int age)
+/*
+ * Function: insertion
+ * 
+ * Complexity: O(1)
+ * 
+ * Description:
+ * 
+ */
+void insertion(SET *sp, int studentID, int age)
 {
-    printf("Inserting student with ID: %d, and age: %d.\n", studentID, age);
-    
-    printf("Student has been added successfully.\n");
+    printf("Inserting student: %d, and age: %d.\n", studentID, age);
+    if(sp->flag[studentID] == FILLED)
+    {
+        printf("There is already a student with ID: %d\n", studentID);
+        return;
+    }
+    sp->age[studentID] = age;
+    sp->flag[studentID] = FILLED;
+    sp->count++;
+    printf("Student: %d has been added successfully.\n", studentID);
 }
 
-deletion(int age)
+/*
+ * Function: deletion
+ * 
+ * Complexity: O(1)
+ * 
+ */
+void deletion(SET *sp, int studentID)
 {
-    printf("Removing students with age: %d.\n", age);
-
-    printf("Student has been removed successfully.\n");
-}
-
-maxAgeGap()
-{
-    int ageGap;
-    printf("The maximum age gap is %d years.\n", ageGap);
+    printf("Removing student: %d.\n", studentID);
+    if(sp->flag[studentID] == FILLED)
+    {
+        sp->flag[studentID] = DELETED;
+        sp->age[studentID] = '\0';
+        printf("Student: %d has been removed successfully.\n", studentID);
+        return;
+    }
+    printf("Student: %d was not found.\n", studentID);
 }

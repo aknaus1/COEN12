@@ -19,7 +19,6 @@
 #include <time.h>
 
 #include "college.h"
-#include "dataset.c"
 
 int randID()
 {
@@ -31,7 +30,7 @@ int randID()
 int randAge()
 {
     int age = 18;
-    age += (rand()%12);
+    age += (rand()%13);
     return age;
 }
 
@@ -51,6 +50,7 @@ int main(void)
     age = randAge();
     searchAge(sp, age);
     age = randAge();
+    studentID = 1 + (rand()%2000);
     deletion(sp, studentID);
     maxAgeGap(sp);
     destroyDataSet(sp);

@@ -223,24 +223,29 @@ void *findElement(SET *sp, void *elt)
     return found ? sp->data[locn] : NULL;
 }
 
-/*  This function takes last element as pivot, places
-    the pivot element at its correct position in sorted
-    array, and places all smaller (smaller than pivot)
-    to left of pivot and all greater elements to right
-    of pivot
-*/
+/*
+ * Function:    partition
+ *
+ * Complexity:  O(n)
+ *
+ * Description: This function takes last element as pivot,
+ *  places the pivot element at its correct position in sorted array,
+ *  and places all smaller (smaller than pivot) to left of pivot
+ *  and all greater elements to right of pivot
+ */
 int partition(SET *sp, void **data, int low, int high)
 {
+    assert(sp != NULL);
+    int i, j = low-1;
     void *pivot = data[high];
-    int i, j = low;
-    for(i = 0; i < high; i++)
+    for(i = low; i < high; i++)
     {
         if((*sp->compare)(data[i], pivot) <= 0)
         {
             j++;
-            void *temp = data[i];
-            data[i] = data[j];
-            data[j] = temp;
+            void *temp = data[j];
+            data[j] = data[i];
+            data[i] = temp;
         }
     }
     void *swap = data[j+1];
@@ -249,15 +254,24 @@ int partition(SET *sp, void **data, int low, int high)
     return j + 1;
 }
 
-void quicksort(SET *sp, void **data, int low, int high)
+/*
+ * Function:    quicksort
+ *
+ * Complexity:  O(n)
+ *
+ * Description: Recursivley runs a qucksort algorithm on elements of the set pointed to by sp
+ */
+static void quicksort(SET *sp, void **data, int low, int high)
 {
+    assert(sp != NULL);
     int index;
-    if(data[low] < data[high])
+    if(low < high)
     {
         index = partition(sp, data, low, high);
         quicksort(sp, data, low, index-1);
         quicksort(sp, data, index+1, high);
     }
+    return;
 }
 
 /*
@@ -271,16 +285,17 @@ void *getElements(SET *sp)
 {
     assert(sp != NULL);
     void **data;
-    data = malloc(sizeof(void**));
-    int i, count = 0;
+    data = malloc(sizeof(void*)*sp->count);
+    assert(data != NULL);
+    int i, j = 0;
     for(i = 0; i < sp->length; i++)
     {
         if(sp->flags[i] == FILLED)
         {
-            data[count] = sp->data[i];
-            count++;
+            data[j] = sp->data[i];
+            j++;
         }
     }
-    quicksort(sp, data, 0, count-1);
+    quicksort(sp, data, 0, sp->count-1);
     return data;
 }

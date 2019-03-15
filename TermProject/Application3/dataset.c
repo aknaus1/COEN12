@@ -78,7 +78,7 @@ void searchAge(SET *sp, int age)
     printf("Student has not been found.\n");
 }
 
-static void *searchID(SET *sp, int studentID)
+void *searchID(SET *sp, int studentID)
 {
     assert(sp != NULL);
     printf("Searching for student: %d.\n", studentID);
@@ -118,6 +118,7 @@ void insertion(SET *sp, int studentID, int age)
     np->prev = temp;
     temp->next->prev = np;
     temp->next = np;
+    sp->count++;
     printf("Student has been added successfully.\n");
 }
 
